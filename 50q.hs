@@ -1,5 +1,5 @@
 -- 1
--- Apresente uma definiçãao recursiva da funçãao (pré-definida)
+-- Apresente uma definição recursiva da função (pré-definida)
 -- enumFromTo :: Int -> Int -> [Int] que constrói a lista dos números inteiros compreendidos entre dois limites.
 -- Por exemplo, enumFromTo 1 5 corresponde à lista [1,2,3,4,5]
 
@@ -133,3 +133,153 @@ dropEquals _ [] = []
 dropEquals x (h : t) | x == h = dropEquals x t
                      | otherwise = h : t
 
+-- 13
+-- Apresente uma definição recursiva da função (pré-definida)
+-- concat :: [[a]] -> [a] que concatena as listas de uma lista.
+-- Por exemplo, concat [[1],[2,2],[3],[4,4,4],[5],[4]] corresponde a [1,2,2,3,4,4,4,5,4].
+
+myConcat :: [[a]] -> [a]
+myConcat [] = []
+myConcat (h : t) = h +++ myConcat t
+
+-- 14
+-- Apresente uma definição recursiva da função (pré-definida)
+-- inits:: [a] -> [[a]] que calcula a lista dos prefixos de uma lista.
+-- Por exemplo, inits [11,21,13] corresponde a [[],[11],[11,21],[11,21,13]].
+
+inits :: [a] -> [[a]]
+inits [] = [[]]
+inits (h : t) = inits (take (length (h : t) - 1) (h : t)) +++ [h : t]
+
+-- 15
+-- Apresente uma definição recursiva da função (pré-definida)
+-- tails:: [a] -> [[a]] que calcula a lista dos sufixos de uma lista.
+-- Por exemplo, tails [1,2,3] corresponde a [[1,2,3],[2,3],[3],[]].
+
+tails :: [a] -> [[a]]
+tails [] = [[]]
+tails (h : t) = [h : t] +++ tails t
+
+-- 16
+-- Apresente uma definição recursiva da função (pré-definida)
+-- isPrefixOf:: Eq a => [a] -> [a] -> Bool que testa se uma lista é prefixo de outra.
+-- Porexemplo, isPrefixOf [10,20] [10,20,30] corresponde a True enquanto que isPrefixOf
+-- [10,30] [10,20,30] corresponde a False.
+
+isPrefixOf :: Eq a => [a] -> [a] -> Bool
+isPrefixOf [] _ = True
+isPrefixOf _ [] = False
+isPrefixOf (h1 : t1) (h2 : t2) | h1 == h2 = isPrefixOf t1 t2
+                               | otherwise = False
+
+-- 17
+-- Apresente uma definição recursiva da função (pré-definida)
+-- isSuffixOf:: Eq a => [a] -> [a] -> Bool que testa se uma lista é sufixo de outra.
+-- Por exemplo, isSuffixOf [20,30] [10,20,30] corresponde a True enquanto que isSuffixOf
+-- [10,30] [10,20,30] corresponde a False.
+
+isSuffixOf :: Eq a => [a] -> [a] -> Bool
+isSuffixOf l1 l2 = reverse l1 `isPrefixOf` reverse l2
+
+-- 18
+-- Apresente uma definição recursiva da função (pré-definida)
+-- isSubsequenceOf :: Eq a => [a] -> [a] -> Bool que testa se os elementos de uma lista ocorrem 
+-- noutra pela mesma ordem relativa.
+-- Por exemplo, isSubsequenceOf [20,40] [10,20,30,40] corresponde a True enquanto que 
+-- isSubsequenceOf [40,20] [10,20,30,40] corresponde a False.
+
+isSubsequenceOf :: Eq a => [a] -> [a] -> Bool
+isSubsequenceOf [] _ = True
+isSubsequenceOf _ [] = False
+isSubsequenceOf (h1 : t1) (h2 : t2) | h1 == h2 = isSubsequenceOf t1 t2
+                                    | otherwise = isSubsequenceOf (h1 : t1) t2
+
+
+-- 19
+-- Apresente uma definição recursiva da função (pré-definida)
+-- elemIndices :: Eq a => a -> [a] -> [Int] que calcula a lista de posições em que um dado elemento 
+-- ocorre numa lista.
+-- Por exemplo, elemIndices 3 [1,2,3,4,3,2,3,4,5] corresponde a [2,4,6].
+
+elemIndices :: Eq a => a -> [a] -> [Int]
+elemIndices _ [] = []
+elemIndices x (h : t) | x == h = 0 : map (1+) (elemIndices x t)
+                      | otherwise = map (1+) (elemIndices x t)
+
+-- 20
+-- Apresente uma definição recursiva da função (pré-definida)
+-- nub :: Eq a => [a] -> [a] que calcula uma lista com os mesmos elementos da recebida, sem repetições.
+-- Por exemplo, nub [1,2,1,2,3,1,2] corresponde a [1,2,3].
+
+nub :: Eq a => [a] -> [a]
+nub [] = []
+nub (h : t) = h : nub (removeEquals h t)
+
+removeEquals :: Eq a => a -> [a] -> [a]
+removeEquals _ [] = []
+removeEquals x (h : t) | x == h = removeEquals x t
+                       | otherwise = h : removeEquals x t
+
+
+-- 21
+-- Apresente uma definição recursiva da função (pré-definida)
+-- delete :: Eq a => a -> [a] -> [a] que retorna a lista resultante de remover (a primeira ocorrência de) 
+-- um dado elemento de uma lista.
+-- Por exemplo, delete 2 [1,2,1,2,3,1,2] corresponde a [1,1,2,3,1,2]. Se não existir nenhuma ocorrência a 
+-- função deverá retornar a lista recebida.
+
+delete :: Eq a => a -> [a] -> [a]
+delete _ [] = []
+delete x (h : t) | x == h = t
+                 | otherwise = h : delete x t
+
+-- 22
+-- Apresente uma definição recursiva da função (pré-definida)
+-- (\\):: Eq a => [a] -> [a] -> [a] que retorna a lista resultante de remover (as primeiras ocorrências) dos 
+-- elementos da segunda lista da primeira.
+-- Por exemplo, (\\) [1,2,3,4,5,1] [1,5] corresponde a [2,3,4,1].
+
+(\\) :: Eq a => [a] -> [a] -> [a]
+(\\) l [] = l
+(\\) l (h : t) = (\\) (delete h l) t
+
+-- 23. Apresente uma definição recursiva da função (pré-definida)
+-- union :: Eq a => [a] -> [a] -> [a] que retorna a lista resultante de acrescentar à primeira lista os elementos 
+-- da segunda que não ocorrem na primeira.
+-- Por exemplo, union [1,1,2,3,4] [1,5] corresponde a [1,1,2,3,4,5].
+
+union :: Eq a => [a] -> [a] -> [a]
+union l [] = l
+union l (h : t) | myElem h l = union l t
+                | otherwise = union (l +++ [h]) t
+
+-- 24
+-- Apresente uma definição recursiva da função (pré-definida)
+-- intersect :: Eq a => [a] -> [a] -> [a] que retorna a lista resultante de remover da primeira lista os elementos 
+-- que não pertencem à segunda.
+-- Por exemplo, intersect [1,1,2,3,4] [1,3,5] corresponde a [1,1,3].
+
+intersect :: Eq a => [a] -> [a] -> [a]
+intersect [] _ = []
+intersect (h : t) l | myElem h l = h : intersect t l
+                    | otherwise = intersect t l
+
+-- 25
+-- Apresente uma definição recursiva da função (pré-definida)
+-- insert :: Ord a => a -> [a] -> [a]  que dado um elemento e uma lista ordenada retorna a lista resultante de inserir
+-- ordenadamente esse elemento na lista.
+-- Por exemplo, insert 25 [1,20,30,40] corresponde a [1,20,25,30,40].
+
+insert :: Ord a => a -> [a] -> [a]
+insert x [] = [x]
+insert x (h : t) | x < h = x : h : t
+                 | otherwise  = h : insert x t
+
+-- 26
+-- Apresente uma definição recursiva da função (pré-definida)
+-- unwords :: [String] -> String que junta todas as strings da lista numa só, separando-as por um espaço.
+-- Por exemplo, unwords ["Programacao", "Funcional"] corresponde a "Programacao Funcional".
+
+myUnwords :: [String] -> String
+myUnwords [] = ""
+myUnwords (h : t) = h +++ " " +++ unwords t
