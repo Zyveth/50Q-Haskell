@@ -283,3 +283,32 @@ insert x (h : t) | x < h = x : h : t
 myUnwords :: [String] -> String
 myUnwords [] = ""
 myUnwords (h : t) = h +++ " " +++ unwords t
+
+-- 27
+-- Apresente uma definição recursiva da função (pré-definida)
+-- unlines :: [String] -> String que junta todas as strings da lista numa só, separando-as pelo caracter ’\n’.
+-- Por exemplo, unlines ["Prog", "Func"] corresponde a "Prog\nFunc\n".
+
+myUnlines :: [String] -> String
+myUnlines [] = ""
+myUnlines (h : t) = h +++ "\n" +++ myUnlines t
+
+-- 28
+-- Apresente uma definição recursiva da função
+-- pMaior :: Ord a => [a] -> Int que dada uma lista não vazia, retorna a posição onde se encontra o maior elemento 
+-- da lista. As posições da lista começam em 0, i.e., a função deverá retornar 0 se o primeiro elemento da lista 
+-- for o maior.
+
+pMaior :: Ord a => [a] -> Int
+pMaior [] = undefined
+pMaior [x] = 0
+pMaior l = index (maxArray l) l 
+
+maxArray :: Ord a => [a] -> a
+maxArray [] = undefined
+maxArray [x] = x
+maxArray (h : t) = if h > maxArray t then h else maxArray t
+
+index :: Eq a => a -> [a] -> Int
+index _ [] = undefined
+index x (h : t) = if x == h then 0 else index x t + 1
