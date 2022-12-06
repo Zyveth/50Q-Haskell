@@ -312,3 +312,75 @@ maxArray (h : t) = if h > maxArray t then h else maxArray t
 index :: Eq a => a -> [a] -> Int
 index _ [] = undefined
 index x (h : t) = if x == h then 0 else index x t + 1
+
+-- 29
+-- Apresente uma definição recursiva da função
+-- temRepetidos :: Eq a => [a] -> Bool que testa se uma lista tem elementos repetidos.
+-- Por exemplo, temRepetidos [11,21,31,21] corresponde a True enquanto que temRepetidos [11,2,31,4] corresponde a 
+-- False.
+
+temRepetidos :: Eq a => [a] -> Bool
+temRepetidos [] = False
+temRepetidos (h : t) | myElem h t = True
+                     | otherwise = temRepetidos t
+
+-- 30
+-- Apresente uma definição recursiva da função
+-- algarismos :: [Char] -> [Char] que determina a lista dos algarismos de uma dada lista de caracteres.
+-- Por exemplo, algarismos "123xp5" corresponde a "1235".
+
+algarismos :: [Char] -> [Char]
+algarismos [] = []
+algarismos (h : t) | fromEnum h >= 48 && fromEnum h <= 57 = h : algarismos t
+                   | otherwise = algarismos t
+
+-- 31
+-- Apresente uma definição recursiva da função
+-- posImpares :: [a] -> [a] que determina os elementos de uma lista que ocorrem em posições ímpares. Considere que 
+-- o primeiro elemento da lista ocorre na posição 0 e por isso par.
+-- Por exemplo, posImpares [10,11,7,5] corresponde a [11,5].
+
+posImpares :: [a] -> [a]
+posImpares [] = []
+posImpares [x] = []
+posImpares (h1 : h2 : t) = h2 : posImpares t
+
+-- 32
+-- Apresente uma definição recursiva da função
+-- posPares :: [a] -> [a] que determina os elementos de uma lista que ocorrem em posições pares. Considere que 
+-- o primeiro elemento da lista ocorre na posição 0 e por isso par.
+-- Por exemplo, posPares [10,11,7,5] corresponde a [10,7].
+
+posPares :: [a] -> [a]
+posPares [] = []
+posPares [x] = [x]
+posPares (h1 : h2 : t) = h1 : posPares t
+
+-- 33
+-- Apresente uma definição recursiva da função
+-- isSorted :: Ord a => [a] -> Bool que testa se uma lista está ordenada por ordem crescente.
+-- Porexemplo, isSorted [1,2,2,3,4,5] corresponde a True, enquanto que isSorted [1,2,4,3,4,5]
+-- corresponde a False.
+
+isSorted :: Ord a => [a] -> Bool
+isSorted [] = True
+isSorted [x] = True
+isSorted (h1 : h2 : t) = h1 <= h2 && isSorted (h2 : t)
+
+-- 34
+-- Apresente uma definição recursiva da função
+-- iSort :: Ord a => [a] -> [a] que calcula o resultado de ordenar uma lista. Assuma, se precisar, que existe 
+-- definida a função 
+-- insert :: Ord a => a -> [a] -> [a] que dado um elemento e uma lista ordenada retorna a lista resultante de inserir 
+-- ordenadamente esse elemento na lista.
+
+-- Pai     -> i
+-- Filho   -> 2 * i + 1, 2 * (i + 1)
+-- 0 -> 1, 2
+-- 1 -> 3, 4 | (2 * 1) + 1, 2 * 2
+-- 2 -> 5, 6 | (2 * 2) + 1, 2 * 3
+-- 3 -> 7, 8 | (2 * 3) + 1, 2 * 4
+
+iSort :: Ord a => [a] -> [a]
+iSort [] = []
+iSort [x] = [x]
