@@ -369,18 +369,210 @@ isSorted (h1 : h2 : t) = h1 <= h2 && isSorted (h2 : t)
 
 -- 34
 -- Apresente uma definição recursiva da função
--- iSort :: Ord a => [a] -> [a] que calcula o resultado de ordenar uma lista. Assuma, se precisar, que existe 
--- definida a função 
+-- iSort :: Ord a => [a] -> [a] que calcula o resultado de ordenar uma lista. Assuma, se precisar, que existe definida a função 
 -- insert :: Ord a => a -> [a] -> [a] que dado um elemento e uma lista ordenada retorna a lista resultante de inserir 
 -- ordenadamente esse elemento na lista.
-
--- Pai     -> i
--- Filho   -> 2 * i + 1, 2 * (i + 1)
--- 0 -> 1, 2
--- 1 -> 3, 4 | (2 * 1) + 1, 2 * 2
--- 2 -> 5, 6 | (2 * 2) + 1, 2 * 3
--- 3 -> 7, 8 | (2 * 3) + 1, 2 * 4
 
 iSort :: Ord a => [a] -> [a]
 iSort [] = []
 iSort [x] = [x]
+iSort (h : t) | h < minList t = h : iSort t
+              | otherwise  = minList t : iSort (delete (minList t) (h : t))
+
+minList :: Ord a => [a] -> a
+minList [] = undefined
+minList [x] = x
+minList (h : t) | h < minList t = h
+                | otherwise = minList t
+
+-- 35
+-- Apresente uma definição recursiva da função
+-- menor :: String -> String -> Bool que dadas duas strings, retorna True se e só se a primeira for menor do que a segunda,
+-- segundo a ordem lexicográfica (i.e., do dicionário)
+-- Por exemplo, menor "sai" "saiu" corresponde a True enquanto que menor "programacao" "funcional" corresponde a False
+
+menor :: String -> String -> Bool
+menor [] _ = True
+menor _ [] = True
+menor (h1 : t1) (h2 : t2) = fromEnum (toLower h1) <= fromEnum (toLower h2) && menor t1 t2
+
+toLower :: Char -> Char
+toLower c | fromEnum c >= 65 && fromEnum c <= 90 = toEnum (fromEnum c + 32) :: Char
+          | fromEnum c >= 97 && fromEnum c <= 122 = c
+          | otherwise = undefined
+
+-- 36
+-- Considere que se usa o tipo [(a,Int)] para representar multi-conjuntos de elementos de a. Considere ainda que nestas 
+-- listas não há pares cuja primeira componente coincida, nem cuja segunda componente seja menor ou igual a zero. Defina a função
+-- elemMSet :: Eq a => a -> [(a,Int)] -> Bool que testa se um elemento pertence a um multi-conjunto.
+-- Por exemplo, elemMSet ’a’ [(’b’,2), (’a’,4), (’c’,1)] corresponde a True enquanto que 
+-- elemMSet ’d’ [(’b’,2), (’a’,4), (’c’,1)] corresponde a False.
+
+elemMSet :: Eq a => a -> [(a,Int)] -> Bool
+elemMSet _ [] = False
+elemMSet x (h : t) | fst h == x = True
+                   | otherwise  = elemMSet x t
+
+-- 37
+-- Considere que se usa o tipo [(a,Int)] para representar multi-conjuntos de elementos de a. Considere ainda que nestas 
+-- listas não há pares cuja primeira componente coincida, nem cuja segunda componente seja menor ou igual a zero. Defina a função
+-- lengthMSet :: [(a,Int)] -> Int que calcula o tamanho de um multi-conjunto.
+-- Por exemplo, lengthMSet [(’b’,2), (’a’,4), (’c’,1)] corresponde a 7.
+
+lengthMSet :: [(a,Int)] -> Int
+lengthMSet [] = 0
+lengthMSet (h : t) = snd h + lengthMSet t
+
+-- 38
+-- Considere que se usa o tipo [(a,Int)] para representar multi-conjuntos de elementos de a. Considere ainda que nestas
+-- listas não há pares cuja primeira componente coincida, nem cuja segunda componente seja menor ou igual a zero. Defina a função
+-- converteMSet :: [(a,Int)] -> [a] que converte um multi-conjuto na lista dos seus elementos.
+-- Por exemplo, converteMSet [(’b’,2), (’a’,4), (’c’,1)] corresponde a "bbaaaac".
+
+converteMSet :: [(a,Int)] -> [a]
+converteMSet [] = []
+converteMSet ((x,0) : t) = converteMSet t
+converteMSet ((x,n) : t) = x : converteMSet ((x,n - 1) : t)
+
+-- 39
+-- Considere que se usa o tipo [(a,Int)] para representar multi-conjuntos de elementos de a. Considere ainda que nestas 
+-- listas não há pares cuja primeira componente coincida, nem cuja segunda componente seja menor ou igual a zero. Defina a função
+-- insereMSet :: Eq a => a -> [(a,Int)] -> [(a,Int)] que acrescenta um elemento a um multi-conjunto.
+-- Por exemplo, insereMSet ’c’ [(’b’,2), (’a’,4), (’c’,1)] corresponde a [(’b’,2), (’a’,4), (’c’,2)].
+
+insereMSet :: Eq a => a -> [(a,Int)] -> [(a,Int)]
+insereMSet x [] = [(x,1)]
+insereMSet x ((h,n) : t) | x == h = (h,n + 1) : t
+                         | otherwise = (h,n) : insereMSet x t
+
+
+-- 40. Considere que se usa o tipo [(a,Int)] para representar multi-conjuntos de elementos de a. Considere ainda que nestas 
+-- listas não há pares cuja primeira componente coincida, nem cuja segunda componente seja menor ou igual a zero. Defina a função
+-- removeMSet :: Eq a => a -> [(a,Int)] -> [(a,Int)] que remove um elemento a um multi-conjunto. Se o elemento não existir, 
+-- deve ser retornado o multi-conjunto recebido.
+-- Por exemplo, removeMSet ’c’ [(’b’,2), (’a’,4), (’c’,1)] corresponde a [(’b’,2), (’a’,4)].
+
+removeMSet :: Eq a => a -> [(a,Int)] -> [(a,Int)]
+removeMSet _ [] = []
+removeMSet x (h : t) | x == fst h = t
+                     | otherwise = h : removeMSet x t
+
+-- 41
+-- Considere que se usa o tipo [(a,Int)] para representar multi-conjuntos de elementos de a. Considere ainda que nestas 
+-- listas não há pares cuja primeira componente coincida, nem cuja segunda componente seja menor ou igual a zero. Defina a função
+-- constroiMSet :: Ord a => [a] -> [(a,Int)] dada uma lista ordenada por ordem crescente, calcula o multi-conjunto dos seus elementos.
+-- Por exemplo, constroiMSet "aaabccc" corresponde a [(’a’,3), (’b’,1), (’c’,3)].
+
+constroiMSet :: Ord a => [a] -> [(a,Int)]
+constroiMSet [] = []
+constroiMSet (h : t) = myReverse (insereMSet h (constroiMSet t))
+
+-- 42
+-- Apresente uma definição recursiva da função pré-definida
+-- partitionEithers :: [Either a b] -> ([a],[b]) que divide uma lista de Eithers em duas listas.
+
+partitionEithers :: [Either a b] -> ([a],[b])
+partitionEithers [] = ([],[])
+partitionEithers (Left h : t) = (h : fst (partitionEithers t), snd (partitionEithers t))
+partitionEithers (Right h : t) = (fst (partitionEithers t), h : snd (partitionEithers t))
+
+-- 43
+-- Apresente uma definição recursiva da função pré-definida
+-- catMaybes :: [Maybe a] -> [a] que colecciona os elementos do tipo a de uma lista.
+
+catMaybes :: [Maybe a] -> [a]
+catMaybes [] = []
+catMaybes ((Just x) : t) = x : catMaybes t
+catMaybes (Nothing : t) = catMaybes t
+
+-- Considere o seguinte tipo para representar movimentos de um robot.
+
+data Movimento = Norte | Sul | Este | Oeste
+                deriving Show
+
+-- 44
+-- Defina a função
+-- posicao:: (Int,Int) -> [Movimento] -> (Int,Int) que, dada uma posição inicial (coordenadas) e uma lista de movimentos, 
+-- calcula a posição final do robot depois de efectuar essa sequência de movimentos.
+
+posicao :: (Int,Int) -> [Movimento] -> (Int,Int)
+posicao p [] = p
+posicao (x,y) (Norte : t) = posicao (x,y + 1) t
+posicao (x,y) (Sul : t) = posicao (x,y - 1) t
+posicao (x,y) (Este : t) = posicao (x + 1,y) t
+posicao (x,y) (Oeste : t) = posicao (x - 1,y) t
+
+-- 45
+-- Defina a função
+-- caminho :: (Int,Int) -> (Int,Int) -> [Movimento] que, dadas as posições inicial e final (coordenadas) do robot, produz 
+-- uma lista de movimentos suficientes para que o robot passe de uma posição para a outra.
+
+caminho :: (Int,Int) -> (Int,Int) -> [Movimento]
+caminho p1 p2 | p1 == p2 = []
+              | fst p1 < fst p2 = Este : caminho (fst p1 + 1, snd p1) p2
+              | fst p1 > fst p2 = Oeste : caminho (fst p1 - 1, snd p1) p2
+              | snd p1 < snd p2 = Norte : caminho (fst p1, snd p1 + 1) p2 
+              | otherwise = Sul : caminho (fst p1, snd p1 - 1) p2
+
+-- 46
+-- Defina a função
+-- vertical :: [Movimento] -> Bool que, testa se uma lista de movimentos só é composta por movimentos verticais (Norte ou Sul).
+
+vertical :: [Movimento] -> Bool
+vertical [] = True
+vertical (Oeste : t) = False
+vertical (Este : t) = False
+vertical (Norte : t) = vertical t
+vertical (Sul : t) = vertical t
+
+-- Considere o seguinte tipo para representar a posi ̧c ̃ao de um robot numa grelha.
+
+data Posicao = Pos Int Int
+                deriving Show
+
+-- 47
+-- Defina a função
+-- maisCentral :: [Posicao] -> Posicao que, dada uma lista não vazia de posições, determina a que está mais perto da origem
+-- (note que as coordenadas de cada ponto são números inteiros).
+
+maisCentral :: [Posicao] -> Posicao
+maisCentral [] = undefined 
+maisCentral [x] = x
+maisCentral (p1 : p2 : t) | distanceSquared p1 (Pos 0 0) <= distanceSquared p2 (Pos 0 0) = maisCentral (p1 : t)
+                          | otherwise = maisCentral (p2 : t)
+
+distanceSquared :: Posicao -> Posicao -> Int
+distanceSquared (Pos x1 y1) (Pos x2 y2) = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)
+
+-- 48
+-- Defina a função
+-- vizinhos :: Posicao -> [Posicao] -> [Posicao] que, dada uma posição e uma lista de posições, selecciona da lista as 
+-- posições adjacentes à posição dada.
+
+vizinhos :: Posicao -> [Posicao] -> [Posicao]
+vizinhos _ [] = []
+vizinhos x (h : t) | vizinho x h = h : vizinhos x t
+                   | otherwise  = vizinhos x t
+
+vizinho :: Posicao -> Posicao -> Bool
+vizinho p1 p2 = distanceSquared p1 p2 > 0 && distanceSquared p1 p2 <= 2 
+
+-- 49
+-- Defina a função
+-- mesmaOrdenada :: [Posicao] -> Bool que testa se todas as posições de uma dada lista têm a mesma ordenada.
+
+mesmaOrdenada :: [Posicao] -> Bool
+mesmaOrdenada [] = True
+mesmaOrdenada [x] = True
+mesmaOrdenada ((Pos x1 y1) : (Pos x2 y2) : t) | y1 == y2 = mesmaOrdenada (Pos x1 y1 : t)
+                                              | otherwise = False
+
+-- Considere o seguinte tipo para representar o estado de um semáforo.
+
+data Semaforo = Verde | Amarelo | Vermelho
+                deriving Show
+
+-- 50
+-- Defina a função
+-- interseccaoOK :: [Semaforo] -> Bool que testa se o estado dos semáforos de um cruzamento é seguro, i.e., não há 
+-- mais do que um semáforo não vermelho.
