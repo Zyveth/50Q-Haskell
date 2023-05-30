@@ -28,7 +28,7 @@ myEnumFromThenTo a b c | a > c = []
 
 -- 4
 -- Apresente uma definição recursiva da função (pré-definida) 
--- (!!) :: [a] -> Int -> a que dada uma lista e um inteiro, calcula o elemento  da lista que se encontra nessa posição
+-- (!!) :: [a] -> Int -> a que dada uma lista e um inteiro, calcula o elemento da lista que se encontra nessa posição
 -- (assume- se que o primeiro elemento se encontra na posição 0).
 -- Por exemplo, (!!) [10,20,30] 1 corresponde a 20.
 -- Ignore os casos em que a função não se encontra definida (i.e., em que a posição fornecida não
@@ -570,9 +570,15 @@ mesmaOrdenada ((Pos x1 y1) : (Pos x2 y2) : t) | y1 == y2 = mesmaOrdenada (Pos x1
 -- Considere o seguinte tipo para representar o estado de um semáforo.
 
 data Semaforo = Verde | Amarelo | Vermelho
-                deriving Show
+                deriving (Show, Eq)
 
 -- 50
 -- Defina a função
 -- interseccaoOK :: [Semaforo] -> Bool que testa se o estado dos semáforos de um cruzamento é seguro, i.e., não há 
 -- mais do que um semáforo não vermelho.
+
+interseccaoOK :: [Semaforo] -> Bool
+interseccaoOK [] = True
+interseccaoOK (Verde : t) =  not (myElem Verde t) && not (myElem Amarelo t)
+interseccaoOK (Amarelo : t) = not (myElem Verde t) && not (myElem Amarelo t)
+interseccaoOK (Vermelho : t) = interseccaoOK t
